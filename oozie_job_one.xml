@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Oozie Workflow for importing all tables from RDBMS -->
+
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="rdbms-to-hdfs-casestudy-pt1-Workflow">
+
+	<start to="import_with_sqoop1"/>
+		<!-- step 1 -->	
+		<action name="import_with_sqoop1">
+			<sqoop xmlns="uri:oozie:sqoop-action:0.2">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>					
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/sqoop_import1"/>	
+				</prepare>
+				<configuration>
+					<property>
+						<name>mapred.job.queue.name</name>
+						<value>${queueName}</value>
+					</property>
+				</configuration>
+				<command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec cs_job_one</command>		
+			</sqoop>
+			<ok to="create_temp_table_one"/>
+			<error to="kill_job"/>
+		</action>		
+		<!-- step 2 -->
+		<action name="create_temp_table_one">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/temp_data"/>
+				</prepare>
+				<script>/user/maria_dev/hadoop_casestudy/create_temp_table_one.txt</script>			
+			</hive>	
+			<ok to="create_partition_table_one"/>
+			<error to="kill_job" />	
+		</action>
+		<!-- step 3 -->
+		<action name="create_partition_table_one">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/CDW_SAPP_D_CUSTOMER"/>
+				</prepare>
+				<script>/user/maria_dev/hadoop_casestudy/create_partition_table_one.txt</script>	
+			</hive>
+			<ok to="insert_data_to_partitioned_table_one"/>
+			<error to="kill_job" />
+		</action>		
+		<!-- step 4 -->
+		<action name="insert_data_to_partitioned_table_one">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				
+				<script>/user/maria_dev/hadoop_casestudy/insert_data_one.txt</script>			
+			</hive>
+			<ok to="import_with_sqoop2" />
+			<error to="kill_job" />
+		</action>
+		<!-- step 5 -->	
+		<action name="import_with_sqoop2">
+			<sqoop xmlns="uri:oozie:sqoop-action:0.2">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/sqoop_import2"/>
+				</prepare>
+				<configuration>
+					<property>
+						<name>mapred.job.queue.name</name>
+						<value>${queueName}</value>
+					</property>
+				</configuration>
+				<command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec cs_job_two</command>		
+			</sqoop>
+			<ok to="create_temp_table_two"/>
+			<error to="kill_job"/>
+		</action>	
+		<!-- step 6 -->
+		<action name="create_temp_table_two">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/temp_data2"/>
+				</prepare>
+				<script>/user/maria_dev/hadoop_casestudy/create_temp_table_two.txt</script>			
+			</hive>	
+			<ok to="create_partition_table_two"/>
+			<error to="kill_job" />	
+		</action>
+		<!-- step 7 -->
+		<action name="create_partition_table_two">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/CDW_SAPP_D_BRANCH"/>
+				</prepare>
+				<script>/user/maria_dev/hadoop_casestudy/create_partition_table_two.txt</script>	
+			</hive>
+			<ok to="insert_data_to_partitioned_table_two"/>
+			<error to="kill_job" />
+		</action>		
+		<!-- step 8 -->
+		<action name="insert_data_to_partitioned_table_two">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>				
+				<script>/user/maria_dev/hadoop_casestudy/insert_data_two.txt</script>			
+			</hive>
+			<ok to="import_with_sqoop3" />
+			<error to="kill_job" />
+		</action>
+		<!-- step 9 -->
+		<action name="import_with_sqoop3">
+			<sqoop xmlns="uri:oozie:sqoop-action:0.2">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/sqoop_import3"/>
+				</prepare>
+				<configuration>
+					<property>
+						<name>mapred.job.queue.name</name>
+						<value>${queueName}</value>
+					</property>
+				</configuration>
+				<command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec cs_job_three</command>		
+			</sqoop>
+			<ok to="create_temp_table_three"/>
+			<error to="kill_job"/>
+		</action>	
+		<!-- step 6 -->
+		<action name="create_temp_table_three">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/temp_data3"/>
+				</prepare>
+				<script>/user/maria_dev/hadoop_casestudy/create_temp_table_three.txt</script>			
+			</hive>	
+			<ok to="create_partition_table_three"/>
+			<error to="kill_job" />	
+		</action>
+		<!-- step 7 -->
+		<action name="create_partition_table_three">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/CDW_SAPP_F_CREDITCARD"/>
+				</prepare>
+				<script>/user/maria_dev/hadoop_casestudy/create_partition_table_three.txt</script>	
+			</hive>
+			<ok to="insert_data_to_partitioned_table_three"/>
+			<error to="kill_job" />
+		</action>		
+		<!-- step 8 -->
+		<action name="insert_data_to_partitioned_table_three">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>				
+				<script>/user/maria_dev/hadoop_casestudy/insert_data_three.txt</script>			
+			</hive>
+			<ok to="import_with_sqoop4" />
+			<error to="kill_job" />
+		</action>
+		<!-- step 9 -->		
+		<action name="import_with_sqoop4">
+			<sqoop xmlns="uri:oozie:sqoop-action:0.2">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/sqoop_import4"/>
+				</prepare>
+				<configuration>
+					<property>
+						<name>mapred.job.queue.name</name>
+						<value>${queueName}</value>
+					</property>
+				</configuration>
+				<command>job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec cs_job_four</command>		
+			</sqoop>
+			<ok to="create_temp_table_four"/>
+			<error to="kill_job"/>
+		</action>	
+		<!-- step 10 -->
+		<action name="create_temp_table_four">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/temp_data4"/>
+				</prepare>
+				<script>/user/maria_dev/hadoop_casestudy/create_temp_table_four.txt</script>			
+			</hive>	
+			<ok to="create_partition_table_four"/>
+			<error to="kill_job" />	
+		</action>
+		<!-- step 11 -->
+		<action name="create_partition_table_four">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>
+				<prepare>
+					<delete path="${nameNode}/user/maria_dev/hadoop_casestudy/CDW_SAPP_D_TIME"/>
+				</prepare>
+				<script>/user/maria_dev/hadoop_casestudy/create_partition_table_four.txt</script>	
+			</hive>
+			<ok to="insert_data_to_partitioned_table_four"/>
+			<error to="kill_job" />
+		</action>		
+		<!-- step 12 -->
+		<action name="insert_data_to_partitioned_table_four">
+			<hive xmlns="uri:oozie:hive-action:0.4">
+				<job-tracker>${jobTracker}</job-tracker>
+				<name-node>${nameNode}</name-node>				
+				<script>/user/maria_dev/hadoop_casestudy/insert_data_four.txt</script>			
+			</hive>
+			<ok to="end" />
+			<error to="kill_job" />
+		</action>				
+		
+		<kill name="kill_job">
+			<message>Job failed</message>
+		</kill>
+		
+
+	<end name="end" />
+</workflow-app>

@@ -1,0 +1,19 @@
+DROP TABLE IF EXISTS temp2;
+CREATE EXTERNAL TABLE temp2
+	( 		BRANCH_CODE   STRING, 
+			BRANCH_NAME   STRING, 
+			BRANCH_STREET STRING, 
+			BRANCH_CITY   STRING,
+	 		BRANCH_STATE  STRING,
+			BRANCH_ZIP    STRING,
+			BRANCH_PHONE  STRING,
+			LAST_UPDATED  TIMESTAMP
+	 )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+LOCATION'/user/maria_dev/hadoop_casestudy/temp_data2'
+tblproperties ("skip.header.line.count"="1");
+
+LOAD DATA INPATH '/user/maria_dev/hadoop_casestudy/sqoop_import2'
+OVERWRITE INTO TABLE temp2;
+
+SELECT * FROM temp2;
