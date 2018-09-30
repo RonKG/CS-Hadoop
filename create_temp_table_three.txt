@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS temp3;
 CREATE EXTERNAL TABLE temp3
 	( 		
+	  		TRANSACTION_ID     STRING,
 			CUST_CC_NO         STRING, 
 			TIMEID             STRING, 
 			BRANCH_CODE        STRING, 
@@ -9,8 +10,5 @@ CREATE EXTERNAL TABLE temp3
 			TRANSACTION_VALUE  DECIMAL(20,3)
 	 )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-LOCATION'/user/maria_dev/hadoop_casestudy/temp_data3'
+LOCATION'/user/maria_dev/hadoop_casestudy/sqoop_import3'
 tblproperties ("skip.header.line.count"="0");
-
-LOAD DATA INPATH '/user/maria_dev/hadoop_casestudy/sqoop_import3'
-OVERWRITE INTO TABLE temp3;

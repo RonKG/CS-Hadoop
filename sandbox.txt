@@ -1,0 +1,10 @@
+sqoop import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--username root -password password \
+--table CDW_SAPP_CUSTOMER \
+--m 1 \
+--incremental append \
+--check-column last_updated \
+--last-value '2018-09-07 16:10:15' \
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data

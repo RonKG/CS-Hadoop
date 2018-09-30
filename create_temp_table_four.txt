@@ -8,8 +8,5 @@ CREATE EXTERNAL TABLE temp4
 	 		YEAR     STRING
 	 )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-LOCATION'/user/maria_dev/hadoop_casestudy/temp_data4'
+LOCATION'/user/maria_dev/hadoop_casestudy/sqoop_import4'
 tblproperties ("skip.header.line.count"="0");
-
-LOAD DATA INPATH '/user/maria_dev/hadoop_casestudy/sqoop_import4'
-OVERWRITE INTO TABLE temp4;

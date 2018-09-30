@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS temp3;
 CREATE EXTERNAL TABLE temp3
 	( 		
+	  		TRANSACTION_ID     STRING,
 			CUST_CC_NO         STRING, 
 			TIMEID             STRING, 
 			BRANCH_CODE        STRING, 
@@ -9,11 +10,8 @@ CREATE EXTERNAL TABLE temp3
 			TRANSACTION_VALUE  DECIMAL(20,3)
 	 )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-LOCATION'/user/maria_dev/hadoop_casestudy/temp_data3'
+LOCATION'/user/maria_dev/hadoop_casestudy/sqoop_import3'
 tblproperties ("skip.header.line.count"="0");
-
-LOAD DATA INPATH '/user/maria_dev/hadoop_casestudy/sqoop_import3'
-OVERWRITE INTO TABLE temp3;
 
 select * from temp3 limit 5;
 ----------------------------------
@@ -21,7 +19,8 @@ select * from temp3 limit 5;
 DROP TABLE IF EXISTS CDW_SAPP_F_CREDIT_CARD;
 CREATE TABLE CDW_SAPP_F_CREDIT_CARD
 	( 		
-			CUST_CC_NO         STRING, 
+			TRANSACTION_ID     STRING,
+	  		CUST_CC_NO         STRING, 
 			TIMEID             STRING, 
 			CUST_SSN           STRING, 
 			TRANSACTION_TYPE   STRING,
@@ -39,6 +38,7 @@ set hive.exec.dynamic.partition.mode=nonstrict;
 INSERT OVERWRITE TABLE CDW_SAPP_F_CREDIT_CARD
  	PARTITION (BRANCH_CODE)
 	SELECT
+		TRANSACTION_ID,
 		CUST_CC_NO, 
 		TIMEID, 
 		CUST_SSN, 

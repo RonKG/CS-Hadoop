@@ -11,11 +11,8 @@ CREATE EXTERNAL TABLE temp2
 			LAST_UPDATED  TIMESTAMP
 	 )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
-LOCATION'/user/maria_dev/hadoop_casestudy/temp_data2'
+LOCATION'/user/maria_dev/hadoop_casestudy/sqoop_import2'
 tblproperties ("skip.header.line.count"="1");
-
-LOAD DATA INPATH '/user/maria_dev/hadoop_casestudy/sqoop_import2'
-OVERWRITE INTO TABLE temp2;
 
 SELECT * FROM temp2;
 

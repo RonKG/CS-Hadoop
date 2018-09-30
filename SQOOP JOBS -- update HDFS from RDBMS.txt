@@ -22,74 +22,132 @@ sqoop job --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop --exec updateD
 
 
 -------------------------------------------------------------
-# job for updating table one
+# job for updating table one --sqoop_import1
 -------------------------------------------------------------
-sqoop job
---meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop
---create sqp_update_table_one
--- import
---connect jdbc:mysql://localhost/CDW_SAPP
---driver com.mysql.jdbc.Driver
---query
-'SELECT * FROM CDW_SAPP_CUSTOMER WHERE $CONDITIONS'
---fields-terminated-by '\t'
---incremental append
---check-column id
---last-value '1000'
---target-dir /user/maria_dev/updateData
+
+## tester sqoop import before sqoop job
+sqoop import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--username root -password password \
+--table CDW_SAPP_CUSTOMER \
+--m 1 \
+--incremental append \
+--check-column last_updated \
+--last-value '2018-09-07 16:10:15' \
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data
+---------------
+
+
+sqoop job \
+--meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop \
+--create sqoop_update_table_one \
+-- import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--table CDW_SAPP_CUSTOMER \
+--incremental append \
+--check-column last_updated \
+--last-value '2018-09-07 16:10:15' \
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data \
 -m1
 
 -------------------------------------------------------------
 # job for updating table two
 -------------------------------------------------------------
+
+## tester sqoop import before sqoop job
+sqoop import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--username root -password password \
+--table CDW_SAPP_CUSTOMER \
+--m 1 \
+--incremental append \
+--check-column last_updated \
+--last-value '2018-09-07 16:10:15' \
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data
+---------------
+
+
 sqoop job
 --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop
---create sqp_update_table_one
+--create sqoop_update_table_two
 -- import
 --connect jdbc:mysql://localhost/CDW_SAPP
 --driver com.mysql.jdbc.Driver
 --query
-'SELECT * FROM CDW_SAPP_CUSTOMER WHERE $CONDITIONS'
+'SELECT SELECT BRANCH_CODE, BRANCH_NAME, BRANCH_STREET, BRANCH_CITY, BRANCH_STATE, COALESCE(BRANCH_ZIP,99999) AS BRANCH_ZIP, BRANCH_PHONE, LAST_UPDATED FROM CDW_SAPP_BRANCH WHERE $CONDITIONS'
 --fields-terminated-by '\t'
 --incremental append
---check-column id
---last-value '1000'
---target-dir /user/maria_dev/updateData
+--check-column last_updated
+--last-value '2018-04-21 16:49:02.0'
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data2
 -m1
 
 -------------------------------------------------------------
 # job for updating table three
 -------------------------------------------------------------
+
+## tester sqoop import before sqoop job
+sqoop import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--username root -password password \
+--table CDW_SAPP_CUSTOMER \
+--m 1 \
+--incremental append \
+--check-column last_updated \
+--last-value '2018-09-07 16:10:15' \
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data
+---------------
+
+
 sqoop job
 --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop
---create sqp_update_table_one
+--create sqoop_update_table_three
 -- import
 --connect jdbc:mysql://localhost/CDW_SAPP
 --driver com.mysql.jdbc.Driver
 --query
-'SELECT * FROM CDW_SAPP_CUSTOMER WHERE $CONDITIONS'
+'SELECT TRANSACTION_ID, CREDIT_CARD_NO AS CUST_CC_NO, CONCAT(LPAD(DAY,2,0),LPAD(MONTH,2,0),YEAR)AS TIMEID, BRANCH_CODE, CUST_SSN, TRANSACTION_TYPE, ROUND(TRANSACTION_VALUE, 2) AS TRANSACTION_VALUE FROM CDW_SAPP_CREDITCARD WHERE $CONDITIONS'
 --fields-terminated-by '\t'
 --incremental append
---check-column id
+--check-column TRANSACTION_ID
 --last-value '1000'
---target-dir /user/maria_dev/updateData
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data3
 -m1
 
 -------------------------------------------------------------
 # job for updating table four
 -------------------------------------------------------------
+
+## tester sqoop import before sqoop job
+sqoop import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--username root -password password \
+--table CDW_SAPP_CUSTOMER \
+--m 1 \
+--incremental append \
+--check-column last_updated \
+--last-value '2018-09-07 16:10:15' \
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data
+---------------
+
+
 sqoop job
 --meta-connect jdbc:hsqldb:hsql://localhost:16000/sqoop
---create sqp_update_table_one
+--create sqoop_update_table_four
 -- import
 --connect jdbc:mysql://localhost/CDW_SAPP
 --driver com.mysql.jdbc.Driver
 --query
-'SELECT * FROM CDW_SAPP_CUSTOMER WHERE $CONDITIONS'
+'SELECT CONCAT(YEAR,LPAD(MONTH,2,0), LPAD(DAY,2,0)) AS TIMEID, DAY AS DAY, MONTH AS MONTH, QUARTER(CONCAT(YEAR,LPAD(MONTH,2,0), LPAD(DAY,2,0))) AS QUARTER, YEAR AS YEAR FROM CDW_SAPP_CREDITCARD WHERE $CONDITIONS'
 --fields-terminated-by '\t'
 --incremental append
---check-column id
+--check-column timeid
 --last-value '1000'
---target-dir /user/maria_dev/updateData
+--target-dir /user/maria_dev/hadoop_casestudy/temp_data4
 -m1
 

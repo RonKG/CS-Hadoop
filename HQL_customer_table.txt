@@ -20,11 +20,8 @@ CREATE EXTERNAL TABLE temp
 			LAST_UPDATED TIMESTAMP
 	)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-LOCATION '/user/maria_dev/hadoop_casestudy/temp_data'
-tblproperties ("skip.header.line.count"="1");
-
-LOAD DATA INPATH '/user/maria_dev/hadoop_casestudy/sqoop_import'
-OVERWRITE INTO TABLE temp;
+LOCATION '/user/maria_dev/hadoop_casestudy/sqoop_import'
+tblproperties ("skip.header.line.count"="0");
 
 /*
 --test
@@ -32,7 +29,7 @@ SELECT * FROM temp;
 
 ----------------------------------------------------
 
---CREATE EXTERNAL TABLE
+--CREATE PARTITIONED TABLE
 */
 
 DROP TABLE IF EXISTS CDW_SAPP_D_CUSTOMER;
@@ -52,8 +49,8 @@ CREATE TABLE CDW_SAPP_D_CUSTOMER
 	 )
 PARTITIONED BY(CUST_STATE STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-LOCATION'/user/maria_dev/hadoop_casestudy/raw_cust_table'
-tblproperties ("skip.header.line.count"="1");
+LOCATION'/user/maria_dev/hadoop_casestudy/CDW_SAPP_D_CUSTOMER'
+tblproperties ("skip.header.line.count"="0");
 
 /*
 --test
@@ -73,7 +70,7 @@ INSERT OVERWRITE TABLE CDW_SAPP_D_CUSTOMER
 		CUST_M_NAME               AS   MIDDLE_NAME,
 		CUST_L_NAME               AS   LAST_NAME,
 		CUST_CC_NO                AS   CREDIT_CARD_NO, 
-		CONCAT_WS(' ',STREET_NAME, APT_NO) AS CUST_STREET,
+		CONCAT_WS(' ',STREET_NAME,APT_NO) AS CUST_STREET,
 		CUST_CITY                 AS   CUST_CITY,
 		CUST_COUNTRY              AS   CUST_COUNTRY,
 		CAST(CUST_ZIP AS BIGINT)  AS   CUST_ZIP,
@@ -82,9 +79,12 @@ INSERT OVERWRITE TABLE CDW_SAPP_D_CUSTOMER
 		LAST_UPDATED              AS   LAST_UPDATED,
 		CUST_STATE                AS   CUST_STATE
 FROM temp;
-
 /*
 --test
 SELECT * FROM CDW_SAPP_D_CUSTOMER  LIMIT 5;
+SELECT * FROM CDW_SAPP_D_CUSTOMER WHERE CUST_F_NAME='Dallas';
+SELECT * FROM CDW_SAPP_D_CUSTOMER WHERE CUST_F_NAME='Samantha';
+SELECT * FROM CDW_SAPP_D_CUSTOMER WHERE CUST_F_NAME LIKE 'D%';
+
 
 */
