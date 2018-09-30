@@ -35,7 +35,7 @@ sqoop import \
 --incremental append \
 --check-column last_updated \
 --last-value '2018-09-07 16:10:15' \
---target-dir /user/maria_dev/hadoop_casestudy/temp_data
+--target-dir /user/maria_dev/hadoop_casestudy/sqoop_import
 ---------------
 
 
@@ -49,7 +49,7 @@ sqoop job \
 --incremental append \
 --check-column last_updated \
 --last-value '2018-09-07 16:10:15' \
---target-dir /user/maria_dev/hadoop_casestudy/temp_data \
+--target-dir /user/maria_dev/hadoop_casestudy/sqoop_import \
 -m1
 
 -------------------------------------------------------------
@@ -60,13 +60,14 @@ sqoop job \
 sqoop import \
 --connect jdbc:mysql://localhost/CDW_SAPP \
 --driver com.mysql.jdbc.Driver \
---username root -password password \
---table CDW_SAPP_CUSTOMER \
+--query \
+'SELECT BRANCH_CODE, BRANCH_NAME, BRANCH_STREET, BRANCH_CITY, BRANCH_STATE, COALESCE(BRANCH_ZIP,99999) AS BRANCH_ZIP, BRANCH_PHONE, LAST_UPDATED FROM CDW_SAPP_BRANCH WHERE $CONDITIONS' \
+--fields-terminated-by '\t' \
 --m 1 \
 --incremental append \
 --check-column last_updated \
 --last-value '2018-09-07 16:10:15' \
---target-dir /user/maria_dev/hadoop_casestudy/temp_data
+--target-dir /user/maria_dev/hadoop_casestudy/sqoop_import2
 ---------------
 
 
@@ -82,7 +83,7 @@ sqoop job
 --incremental append
 --check-column last_updated
 --last-value '2018-04-21 16:49:02.0'
---target-dir /user/maria_dev/hadoop_casestudy/temp_data2
+--target-dir /user/maria_dev/hadoop_casestudy/sqoop_import2
 -m1
 
 -------------------------------------------------------------
@@ -99,7 +100,7 @@ sqoop import \
 --incremental append \
 --check-column last_updated \
 --last-value '2018-09-07 16:10:15' \
---target-dir /user/maria_dev/hadoop_casestudy/temp_data
+--target-dir /user/maria_dev/hadoop_casestudy/sqoop_import3
 ---------------
 
 
@@ -115,7 +116,7 @@ sqoop job
 --incremental append
 --check-column TRANSACTION_ID
 --last-value '1000'
---target-dir /user/maria_dev/hadoop_casestudy/temp_data3
+--target-dir /user/maria_dev/hadoop_casestudy/sqoop_import3
 -m1
 
 -------------------------------------------------------------
@@ -132,7 +133,7 @@ sqoop import \
 --incremental append \
 --check-column last_updated \
 --last-value '2018-09-07 16:10:15' \
---target-dir /user/maria_dev/hadoop_casestudy/temp_data
+--target-dir /user/maria_dev/hadoop_casestudy/sqoop_import4
 ---------------
 
 
@@ -148,6 +149,6 @@ sqoop job
 --incremental append
 --check-column timeid
 --last-value '1000'
---target-dir /user/maria_dev/hadoop_casestudy/temp_data4
+--target-dir /user/maria_dev/hadoop_casestudy/sqoop_import4
 -m1
 
