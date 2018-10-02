@@ -1,10 +1,43 @@
+<coordinator-app xmlns="uri:oozie:coordinator:0.2"
+name="coord_copydata_from_external_orc" frequency="5 * * * *" start="2016-00-
+18T01:00Z" end="2025-12-31T00:00Z"" timezone="America/Los_Angeles">
+
+
+
+
+
 sqoop import \
 --connect jdbc:mysql://localhost/CDW_SAPP \
 --driver com.mysql.jdbc.Driver \
---username root -password password \
---table CDW_SAPP_CUSTOMER \
+--query \
+'SELECT CAST(CONCAT(YEAR,LPAD(MONTH,2,0), LPAD(DAY,2,0)) AS CHAR(15)) AS TIMEID, 
+		DAY AS DAY, MONTH AS MONTH, 
+        QUARTER(CONCAT(YEAR,LPAD(MONTH,2,0), LPAD(DAY,2,0))) AS QUARTER, 
+        YEAR AS YEAR 
+FROM CDW_SAPP_CREDITCARD 
+ WHERE $CONDITIONS' \
+--fields-terminated-by ',' \
 --m 1 \
 --incremental append \
---check-column last_updated \
---last-value '2018-09-07 16:10:15' \
---target-dir /user/maria_dev/hadoop_casestudy/temp_data
+--check-column timeid \
+--last-value 20180101 \
+--target-dir /user/maria_dev/hadoop_casestudy/time_table
+
+
+
+# sqoop import 4
+sqoop import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--query \
+'SELECT CONVERT(CONCAT(YEAR,LPAD(MONTH,2,0), LPAD(DAY,2,0),""),UNSIGNED INTEGER)  AS TIMEID, 
+DAY AS DAY,
+MONTH AS MONTH, 
+QUARTER(CONCAT(YEAR,LPAD(MONTH,2,0), LPAD(DAY,2,0))) AS QUARTER, 
+YEAR AS YEAR 
+FROM CDW_SAPP_CREDITCARD WHERE $CONDITIONS' \
+--fields-terminated-by ',' \
+-m 1 \
+--target-dir /user/maria_dev/hadoop_casestudy/time_table
+
+

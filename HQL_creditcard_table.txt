@@ -10,7 +10,7 @@ CREATE EXTERNAL TABLE temp3
 			TRANSACTION_VALUE  DECIMAL(20,3)
 	 )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-LOCATION'/user/maria_dev/hadoop_casestudy/sqoop_import3'
+LOCATION'/user/maria_dev/hadoop_casestudy/creditcard_tables'
 tblproperties ("skip.header.line.count"="0");
 
 select * from temp3 limit 5;

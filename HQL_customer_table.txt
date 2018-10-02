@@ -21,7 +21,7 @@ CREATE EXTERNAL TABLE temp
 			LAST_UPDATED TIMESTAMP
 	)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-LOCATION '/user/maria_dev/hadoop_casestudy/sqoop_import'
+LOCATION '/user/maria_dev/hadoop_casestudy/customer_tables'
 tblproperties ("skip.header.line.count"="0");
 
 /*
